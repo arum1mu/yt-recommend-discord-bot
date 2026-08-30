@@ -300,6 +300,6 @@ pool.on("connection", (connection) => {
   console.log("MariaDB connection established:", connection.threadId);
 });
 
-pool.on("release", (err) => {
-  
+pool.on("release", () => {
+  // MariaDB pool released a connection
 });

@@ -15,7 +15,7 @@
   "type": "commonjs",
   "main": "./src/main.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src/**/*.ts",
     "build": "tsc",
     "dev": "tsx watch src/main.ts",
     "start": "node dist/main.js"
@@ -28,8 +28,12 @@
     "mariadb": "^3.5.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.4.0",
     "eslint": "^10.9.1",
+    "globals": "^17.11.0",
     "tsx": "^4.23.12",
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.68.0"
   }
 }
