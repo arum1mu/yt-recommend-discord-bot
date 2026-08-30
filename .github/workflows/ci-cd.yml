@@ -68,15 +68,19 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Connect to Tailscale
-        uses: tailscale/tailscale-action@v1
+        uses: tailscale/tailscale-action@v4
         with:
-          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
+          oauth-client-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
+          tags: "tag:ci"
+          ping: ${{ secrets.SERVER_HOST }}
           hostname: github-actions-runner
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
