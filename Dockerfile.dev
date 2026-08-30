@@ -1,0 +1,11 @@
+FROM node:20-alpine
+
+WORKDIR /src
+
+COPY package*.json ./
+RUN npm install -y
+
+COPY . .
+
+ENV NODE_ENV=development
+CMD ["npm", "run", "dev"]

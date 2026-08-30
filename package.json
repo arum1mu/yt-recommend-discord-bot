@@ -1,0 +1,35 @@
+{
+  "name": "yt-recommend-discord-bot",
+  "version": "1.0.0",
+  "description": "定期的に YouTube Data API v3 で検索し、関連する動画を Discord の指定チャンネルへ投稿する bot です。",
+  "homepage": "https://github.com/arum1mu/yt-recommend-discord-bot#readme",
+  "bugs": {
+    "url": "https://github.com/arum1mu/yt-recommend-discord-bot/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arum1mu/yt-recommend-discord-bot.git"
+  },
+  "license": "MIT",
+  "author": "arumimu",
+  "type": "commonjs",
+  "main": "./src/main.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "dev": "tsx watch src/main.ts",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.27.0",
+    "googleapis": "^176.0.0",
+    "kysely": "^0.29.5",
+    "kysely-mariadb": "^0.1.3",
+    "mariadb": "^3.5.3"
+  },
+  "devDependencies": {
+    "eslint": "^10.9.1",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}
