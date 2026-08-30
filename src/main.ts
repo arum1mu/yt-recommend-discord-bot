@@ -11,7 +11,7 @@ import {
 import { Generated, Kysely, Selectable, sql } from "kysely";
 import { MariadbDialect } from "kysely-mariadb";
 import { createPool } from "mariadb";
-
+aa
 interface YoutubeRecommendJobTable {
   id: Generated<number>;
   guild_id: string;
