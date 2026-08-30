@@ -68,7 +68,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Connect to Tailscale
-        uses: tailscale/tailscale-action@v4
+        uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
           oauth-client-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
