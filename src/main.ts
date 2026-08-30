@@ -79,9 +79,13 @@ async function initDb() {
     .execute();
 }
 
+pool.on("connection", async () => {
+  console.log("Connected to MariaDB");
+  await initDb();
+});
+
 client.once(Events.ClientReady, async () => {
   try {
-    await initDb();
     await registerCommands();
     await loadAndScheduleJobs();
   } catch (err) {
