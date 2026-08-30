@@ -71,7 +71,7 @@ jobs:
         uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
-          oauth-client-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
+          oauth-secret: ${{ secrets.TAILSCALE_CLIENT_SECRET }}
           tags: "tag:ci"
           ping: ${{ secrets.SERVER_HOST }}
           hostname: github-actions-runner
