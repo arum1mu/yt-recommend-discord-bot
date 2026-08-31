@@ -11,6 +11,7 @@ import {
 import { Generated, Kysely, Selectable, sql } from "kysely";
 import { MariadbDialect } from "kysely-mariadb";
 import { createPool } from "mariadb";
+import config from "./config";
 
 interface YoutubeRecommendJobTable {
   id: Generated<number>;
@@ -30,33 +31,20 @@ interface Database {
 
 type YoutubeRecommendJob = Selectable<YoutubeRecommendJobTable>;
 
-const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-const MARIADB_HOST = process.env.MARIADB_HOST;
-const MARIADB_PORT = Number(process.env.MARIADB_PORT) || 3306;
-const MARIADB_USER = process.env.MARIADB_USER;
-const MARIADB_PASSWORD = process.env.MARIADB_PASSWORD;
-const MARIADB_DATABASE = process.env.MARIADB_DATABASE || "yt_recommend_discord_bot";
-
-//環境変数のチェック
-if (!YOUTUBE_API_KEY || !DISCORD_BOT_TOKEN || !MARIADB_HOST || !MARIADB_USER || !MARIADB_PASSWORD || !MARIADB_DATABASE) {
-  console.error("Missing required environment variables: YOUTUBE_API_KEY, DISCORD_BOT_TOKEN, MARIADB_HOST, MARIADB_USER, MARIADB_PASSWORD, or MARIADB_DATABASE");
-  process.exit(1);
-}
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
 
 const youtube = google.youtube({
   version: "v3",
-  auth: YOUTUBE_API_KEY,
+  auth: config.YOUTUBE_API_KEY,
 });
 
 const pool = createPool({
-  host: MARIADB_HOST,
-  port: MARIADB_PORT,
-  user: MARIADB_USER,
-  password: MARIADB_PASSWORD,
-  database: MARIADB_DATABASE,
+  host: config.MARIADB_HOST,
+  port: config.MARIADB_PORT,
+  user: config.MARIADB_USER,
+  password: config.MARIADB_PASSWORD,
+  database: config.MARIADB_DATABASE,
 });
 
 const db = new Kysely<Database>({
@@ -293,17 +281,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 
-client.login(DISCORD_BOT_TOKEN).then(() => {
+client.login(config.DISCORD_BOT_TOKEN).then(() => {
   console.log(`Logged in as ${client.user?.tag}`);
 }).catch((error) => {
   console.error("Error logging in to Discord:", error);
   process.exit(1);
 });
 
-pool.on("connection", (connection) => {
-  console.log("MariaDB connection established:", connection.threadId);
-});
-
-pool.on("release", () => {
-  // MariaDB pool released a connection
-});
