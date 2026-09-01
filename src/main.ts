@@ -20,9 +20,6 @@ interface YoutubeRecommendJobTable {
   search_query: string;
   max_results: number;
   interval_hours: number;
-  last_posted_at: Date | string | null;
-  created_at: Date | string;
-  updated_at: Date | string;
 }
 
 interface Database {
@@ -61,9 +58,6 @@ async function initDb() {
     .addColumn("search_query", "varchar(255)", (col) => col.notNull())
     .addColumn("max_results", "integer", (col) => col.notNull().defaultTo(3))
     .addColumn("interval_hours", "integer", (col) => col.notNull().defaultTo(1))
-    .addColumn("last_posted_at", "datetime")
-    .addColumn("created_at", "datetime", (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
-    .addColumn("updated_at", "datetime", (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
     .execute();
 }
 
@@ -148,10 +142,7 @@ async function registerJob(guildId: string, channelId: string, searchQuery: stri
     channel_id: channelId,
     search_query: searchQuery,
     max_results: maxResults,
-    interval_hours: intervalHours,
-    last_posted_at: null,
-    created_at: new Date(),
-    updated_at: new Date(),
+    interval_hours: intervalHours
   }).execute();
 }
 
@@ -209,10 +200,6 @@ function scheduleJob(job: YoutubeRecommendJob) {
       for (const url of urls) {
         await textChannel.send(url);
       }
-      await db.updateTable("youtube_recommend_jobs")
-        .set({ last_posted_at: new Date() })
-        .where("id", "=", job.id)
-        .execute();
     } catch (err) {
       console.error("Job run error:", err);
     }
