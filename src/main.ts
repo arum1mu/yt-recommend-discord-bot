@@ -75,13 +75,32 @@ client.once(Events.ClientReady, async () => {
   }
 });
 
-function fetchVideos(query: string, maxResults = 5) {
-  return youtube.search.list({
+function shuffle<T>(array: T[]): T[] {
+  const result = [...array]; 
+  
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  
+  return result;
+}
+
+async function fetchVideos(query: string, maxResults = 5) {
+  const list = youtube.search.list({
     part: ["snippet"],
     q: query,
-    maxResults: maxResults,
-    type: "video",
-  } as unknown as youtube_v3.Params$Resource$Search$List);
+    maxResults: 50,
+    type: ["video"],
+    SortOrderType: "date",
+  } as youtube_v3.Params$Resource$Search$List)
+  .then((res) => res.data)
+  .then((data) => {
+    const items = data.items ?? [];
+    const shuffled = shuffle(items);
+    return shuffled.slice(0, maxResults);
+  });
+  return list;
 }
 
 async function registerCommands() {
@@ -100,9 +119,9 @@ async function registerCommands() {
       .addIntegerOption((option) =>
         option
           .setName("max_results")
-          .setDescription("1-5 の範囲で投稿数")
+          .setDescription("1-50 の範囲で投稿数")
           .setMinValue(1)
-          .setMaxValue(5)
+          .setMaxValue(50)
       )
       .addIntegerOption((option) =>
         option
@@ -187,8 +206,7 @@ function scheduleJob(job: YoutubeRecommendJob) {
         return;
       }
 
-      const res = await fetchVideos(job.search_query, Number(job.max_results) || 3);
-      const items = res.data.items ?? [];
+      const items = await fetchVideos(job.search_query, Number(job.max_results) || 3);
       const channel = await client.channels.fetch(job.channel_id);
       if (!channel || !("send" in channel)) return;
       const textChannel = channel as TextChannel;
@@ -228,7 +246,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       const intervalHours = interaction.options.getInteger("interval_hours") || 1;
       const channelOpt = interaction.options.getChannel("channel");
       const channelId = channelOpt ? channelOpt.id : interaction.channelId!;
-      await registerJob(interaction.guildId, channelId, searchQuery, Math.min(5, Math.max(1, maxResults)), intervalHours);
+      await registerJob(interaction.guildId, channelId, searchQuery, Math.min(50, Math.max(1, maxResults)), intervalHours);
       // schedule immediately
       const job = await db.selectFrom("youtube_recommend_jobs")
         .selectAll()
