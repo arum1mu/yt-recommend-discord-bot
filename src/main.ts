@@ -8,7 +8,7 @@ import {
   ChannelType,
   TextChannel,
 } from "discord.js";
-import { Generated, Kysely, Selectable, sql } from "kysely";
+import { Generated, Kysely, Selectable } from "kysely";
 import { MariadbDialect } from "kysely-mariadb";
 import { createPool } from "mariadb";
 import config from "./config";
